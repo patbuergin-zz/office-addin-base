@@ -1,0 +1,19 @@
+{
+  "name": "office-addin-base",
+  "version": "1.0.0",
+  "homepage": "https://github.com/patbuergin/office-addin-base",
+  "authors": [
+    "Patrick Buergin <hi@patrickbuergin.com>"
+  ],
+  "description": "An opinionated base project for building Office Add-ins",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.0",
+    "office-ui-fabric": "~1.2.1"
+  }
+}
