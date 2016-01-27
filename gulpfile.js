@@ -3,6 +3,7 @@ const babel       = require('gulp-babel'),
       gulp        = require('gulp'),
       inject      = require('gulp-inject'),
       minifyCss   = require('gulp-minify-css'),
+      plumber     = require('gulp-plumber'),
       rimraf      = require('gulp-rimraf'),
       sass        = require('gulp-sass'),
       uglify      = require('gulp-uglify'),
@@ -12,7 +13,6 @@ const glob = {
     assets: 'assets/**/*',
     html: '**/*.html',
     js: '**/*.js',
-    scss: '**/*.scss',
     css: '**/*.css'
 };
 
@@ -43,6 +43,7 @@ gulp.task('markup', () => {
 // Compiles the scripts (js)
 gulp.task('script', () => {
     return gulp.src(path.src + glob.js)
+        .pipe(plumber())
         .pipe(babel())
         .pipe(uglify())
         .pipe(gulp.dest(path.dist))
@@ -50,8 +51,9 @@ gulp.task('script', () => {
 
 // Compiles the styles (css)
 gulp.task('style', () => {
-    return gulp.src(path.src + glob.scss)
-        .pipe(sass())
+    return gulp.src(path.src + '_scss/style.scss')
+        .pipe(plumber())
+        .pipe(sass({ includePaths: './src/_scss' }))
         .pipe(minifyCss())
         .pipe(gulp.dest(path.dist))
 });
