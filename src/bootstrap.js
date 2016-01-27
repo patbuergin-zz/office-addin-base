@@ -1,27 +1,21 @@
 (function() {
-    const $dummy = $('#dummy');
+    Office.initialize = () => {
+        $('form')
+            .removeClass('hidden')
+            .on('submit', onSubmit);
+    };
 
-    let n = 0, next = 1;
-    function fib() {
-        let curr = n;
-        [n, next] = [next, next + n];
-        return curr;
+    function onSubmit() {
+        let currText = $('#text').val();
+        insertText(currText);
+        return false;
     }
 
-    function showNextNr() {
-        $dummy
-            .removeClass('ms-u-slideUpIn20')
-            .addClass('ms-u-slideUpOut20');
-
-        setTimeout(() => {
-            $dummy
-                .text(fib())
-                .removeClass('ms-u-slideUpOut20')
-                .addClass('ms-u-slideUpIn20');
-        }, 167);
-    };
-
-    Office.initialize = () => {
-        window.setInterval(showNextNr, 2000);
-    };
+    function insertText(text) {
+        Office.context.document.setSelectedDataAsync(text, (res) => {
+            if (res.status === 'failed') {
+                console.log('Insertion failed', res.error);
+            }
+        });
+    }
 })();

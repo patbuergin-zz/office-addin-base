@@ -13,13 +13,15 @@ const glob = {
     assets: 'assets/**/*',
     html: '**/*.html',
     js: '**/*.js',
+    scss: '**/*.scss',
     css: '**/*.css'
 };
 
 const path = {
     src:  'src/',
     dist: 'dist/',
-    ship: 'ship/'
+    ship: 'ship/',
+    bower: 'bower_components/'
 };
 
 // Cleans the dist/ and ship/ folders
@@ -53,7 +55,12 @@ gulp.task('script', () => {
 gulp.task('style', () => {
     return gulp.src(path.src + '_scss/style.scss')
         .pipe(plumber())
-        .pipe(sass({ includePaths: './src/_scss' }))
+        .pipe(sass({
+            includePaths: [
+                path.bower + 'office-ui-fabric/dist/sass',
+                path.src + '_scss'
+            ]
+         }))
         .pipe(minifyCss())
         .pipe(gulp.dest(path.dist))
 });

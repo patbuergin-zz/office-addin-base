@@ -5,12 +5,23 @@ body {
 }
 
 body {
+    background-color: $ms-color-neutralLighter;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0;
 }
 
-#dummy {
-    font-size: 42px;
+form {
+    transform: scale(1.5);
+    width: 180px;
+
+    button[type="submit"] {
+        margin-top: 5px;
+        width: 100%;
+    }
+}
+
+.hidden {
+    display: none;
 }
