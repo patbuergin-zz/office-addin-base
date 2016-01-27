@@ -13,6 +13,7 @@ body {
 }
 
 form {
+    @include placeholder-color($ms-color-neutralTertiary);
     transform: scale(1.5);
     width: 180px;
 
@@ -20,8 +21,4 @@ form {
         margin-top: 5px;
         width: 100%;
     }
-}
-
-.hidden {
-    display: none;
 }

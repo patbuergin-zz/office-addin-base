@@ -1,0 +1,37 @@
+.host-button,
+.host-button:focus,
+.host-button:hover {
+    .ms-Button-label {
+        color: white;
+    }
+}
+
+.word .host-button  {
+    @include ms-bgColor-blue;
+    @include ms-borderColor-blue;
+
+    &:focus, &:hover {
+        @include ms-bgColor-blueDark;
+        @include ms-borderColor-blueDark;
+    }
+}
+
+.excel .host-button {
+    @include ms-bgColor-green;
+    @include ms-borderColor-green;
+
+    &:focus, &:hover {
+        @include ms-bgColor-greenDark;
+        @include ms-borderColor-greenDark;
+    }
+}
+
+.powerpoint .host-button {
+    @include ms-bgColor-orange;
+    @include ms-borderColor-orange;
+
+    &:focus, &:hover {
+        @include ms-bgColor-redDark;
+        @include ms-borderColor-redDark;
+    }
+}
