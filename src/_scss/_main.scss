@@ -5,11 +5,12 @@ body {
 }
 
 body {
+    @include ms-bgColor-neutralLighter;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: $ms-color-neutralLighter;
     margin: 0;
+    overflow: hidden;
 }
 
 form {

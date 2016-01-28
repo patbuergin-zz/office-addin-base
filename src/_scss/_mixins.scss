@@ -1,5 +1,5 @@
 @mixin placeholder-color($color) {
-    &:placeholder-shown {
+    :placeholder-shown {
         color: $color;
     }
 
