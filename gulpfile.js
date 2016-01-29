@@ -85,7 +85,8 @@ gulp.task('serve', ['build'], () => {
         notify: false,
         port: 8443,
         server: {
-            baseDir: "./"
+            baseDir: ".",
+            directory: true
         }
     });
 
