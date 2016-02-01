@@ -1,12 +1,14 @@
 const babel       = require('gulp-babel'),
       browserSync = require('browser-sync').create(),
       gulp        = require('gulp'),
+      htmlmin     = require('gulp-htmlmin'),
       inject      = require('gulp-inject'),
       minifyCss   = require('gulp-minify-css'),
       plumber     = require('gulp-plumber'),
       rimraf      = require('gulp-rimraf'),
       sass        = require('gulp-sass'),
       uglify      = require('gulp-uglify'),
+      usemin      = require('gulp-usemin'),
       wiredep     = require('wiredep').stream;
 
 const glob = {
@@ -33,7 +35,7 @@ gulp.task('clean', function () {
 // Applies operations to assets (e.g. images)
 gulp.task('assets', () => {
     return gulp.src(path.src + glob.assets)
-        .pipe(gulp.dest(path.dist))
+        .pipe(gulp.dest(path.dist + 'assets'))
 });
 
 // Compiles the markup (html)
@@ -47,7 +49,6 @@ gulp.task('script', () => {
     return gulp.src(path.src + glob.js)
         .pipe(plumber())
         .pipe(babel())
-        .pipe(uglify())
         .pipe(gulp.dest(path.dist))
 });
 
@@ -61,7 +62,6 @@ gulp.task('style', () => {
                 path.src + '_scss'
             ]
          }))
-        .pipe(minifyCss())
         .pipe(gulp.dest(path.dist))
 });
 
@@ -85,8 +85,7 @@ gulp.task('serve', ['build'], () => {
         notify: false,
         port: 8443,
         server: {
-            baseDir: ".",
-            directory: true
+            baseDir: "./"
         }
     });
 
@@ -105,6 +104,22 @@ gulp.task('bs-reload', ['build'], () => {
     browserSync.reload();
 });
 
+// Creates a minified build in /ship
+gulp.task('build-min', ['build'], () => {
+    gulp.src(path.dist + 'index.html')
+        .pipe(usemin({
+            html: [
+                htmlmin({
+                    collapseWhitespace: true,
+                    removeTagWhitespace: true
+                })
+            ],
+            css: [ minifyCss ],
+            js: [ uglify ],
+            vendorjs: [ () => { return uglify({ preserveComments: 'some' }); } ]
+        }))
+        .pipe(gulp.dest(path.ship));
+});
+
 gulp.task('build', ['assets', 'index']);
 gulp.task('default', ['serve']);
-gulp.task('ship', []);
