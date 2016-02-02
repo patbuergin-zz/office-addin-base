@@ -14,20 +14,20 @@ const babel       = require('gulp-babel'),
       wiredep     = require('wiredep').stream;
 
 const glob = {
-    all: '**/*',
-    assets: 'assets/**/*',
-    html: '**/*.html',
-    js: '**/*.js',
-    scss: '**/*.scss',
-    css: '**/*.css'
+    all    : '**/*',
+    assets : 'assets/**/*',
+    html   : '**/*.html',
+    js     : '**/*.js',
+    scss   : '**/*.scss',
+    css    : '**/*.css'
 };
 
 const path = {
-    src:  'src/',
-    dist: 'dist/',
-    ship: 'ship/',
-    bower: 'bower_components/',
-    ftp: '/site/wwwroot' // Azure Web App
+    src   : 'src/',
+    dist  : 'dist/',
+    ship  : 'ship/',
+    bower : 'bower_components/',
+    ftp   : '/site/wwwroot' // Azure Web App
 };
 
 // Cleans the dist/ and ship/ folders
@@ -109,8 +109,14 @@ gulp.task('bs-stream', ['style'], () =>
 // Trigger a refresh on Browsersync clients
 gulp.task('bs-reload', ['build'], browserSync.reload);
 
+// Move assets to /ship
+gulp.task('ship-assets', () =>
+    gulp.src(path.dist + glob.assets)
+        .pipe(gulp.dest(path.ship + 'assets'))
+);
+
 // Creates a production build in /ship
-gulp.task('build-ship', ['build'], () =>
+gulp.task('ship-build', ['build'], () =>
     gulp.src(path.dist + 'index.html')
         .pipe(usemin({
             html: [
@@ -121,14 +127,14 @@ gulp.task('build-ship', ['build'], () =>
             ],
             css: [ minifyCss ],
             js: [ uglify ],
-            vendorjs: [ () => { return uglify({ preserveComments: 'some' }); } ]
+            vendorjs: [ () => uglify({ preserveComments: 'some' }) ]
         }))
         .pipe(gulp.dest(path.ship))
 );
 
 // Creates a production build and deploys it to an FTP server using the credentials
 // stored in ftp.json (schema: { "host": "...", "user": "...", "pass": "..." })
-gulp.task('ship', ['build-ship'], () => {
+gulp.task('ship', ['ship-assets', 'ship-build'], () => {
     const config = require('./ftp.json');
     const conn = ftp.create({
         host:     config.host,
