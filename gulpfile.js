@@ -1,6 +1,6 @@
 const babel       = require('gulp-babel'),
       browserSync = require('browser-sync').create(),
-      ftp         = require( 'vinyl-ftp' ),
+      ftp         = require('vinyl-ftp'),
       gulp        = require('gulp'),
       htmlmin     = require('gulp-htmlmin'),
       inject      = require('gulp-inject'),
@@ -82,7 +82,10 @@ gulp.task('index', ['markup', 'script', 'style'], function () {
         .pipe(gulp.dest(path.dist));
 });
 
-// Serves the static content on https://localhost:8443
+// Debug build of the web application
+gulp.task('build', ['assets', 'index']);
+
+// Builds the web application and serves it at https://localhost:8443/dist
 gulp.task('serve', ['build'], () => {
     browserSync.init({
         https: true,
@@ -141,5 +144,5 @@ gulp.task('ship', ['build-ship'], () => {
         .pipe(conn.dest(path.ftp));
 });
 
-gulp.task('build', ['assets', 'index']);
+// Execute the serve task by default ('gulp' command without args)
 gulp.task('default', ['serve']);
