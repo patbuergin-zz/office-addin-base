@@ -1,5 +1,6 @@
 const babel       = require('gulp-babel'),
       browserSync = require('browser-sync').create(),
+      ftp         = require( 'vinyl-ftp' ),
       gulp        = require('gulp'),
       htmlmin     = require('gulp-htmlmin'),
       inject      = require('gulp-inject'),
@@ -9,9 +10,11 @@ const babel       = require('gulp-babel'),
       sass        = require('gulp-sass'),
       uglify      = require('gulp-uglify'),
       usemin      = require('gulp-usemin'),
+      util        = require('gulp-util'),
       wiredep     = require('wiredep').stream;
 
 const glob = {
+    all: '**/*',
     assets: 'assets/**/*',
     html: '**/*.html',
     js: '**/*.js',
@@ -23,38 +26,39 @@ const path = {
     src:  'src/',
     dist: 'dist/',
     ship: 'ship/',
-    bower: 'bower_components/'
+    bower: 'bower_components/',
+    ftp: '/site/wwwroot' // Azure Web App
 };
 
 // Cleans the dist/ and ship/ folders
-gulp.task('clean', function () {
-    return gulp.src([ path.dist, path.ship ])
-        .pipe(rimraf());
-});
+gulp.task('clean', () =>
+    gulp.src([ path.dist, path.ship ])
+        .pipe(rimraf())
+);
 
 // Applies operations to assets (e.g. images)
-gulp.task('assets', () => {
-    return gulp.src(path.src + glob.assets)
+gulp.task('assets', () =>
+    gulp.src(path.src + glob.assets)
         .pipe(gulp.dest(path.dist + 'assets'))
-});
+);
 
 // Compiles the markup (html)
-gulp.task('markup', () => {
-    return gulp.src(path.src + glob.html)
+gulp.task('markup', () =>
+    gulp.src(path.src + glob.html)
         .pipe(gulp.dest(path.dist))
-});
+);
 
 // Compiles the scripts (js)
-gulp.task('script', () => {
-    return gulp.src(path.src + glob.js)
+gulp.task('script', () =>
+    gulp.src(path.src + glob.js)
         .pipe(plumber())
         .pipe(babel())
         .pipe(gulp.dest(path.dist))
-});
+);
 
 // Compiles the styles (css)
-gulp.task('style', () => {
-    return gulp.src(path.src + '_scss/style.scss')
+gulp.task('style', () =>
+    gulp.src(path.src + '_scss/style.scss')
         .pipe(plumber())
         .pipe(sass({
             includePaths: [
@@ -63,7 +67,7 @@ gulp.task('style', () => {
             ]
          }))
         .pipe(gulp.dest(path.dist))
-});
+);
 
 // Injects compiled scripts and styles, as well as all dependencies into index.html
 gulp.task('index', ['markup', 'script', 'style'], function () {
@@ -94,18 +98,16 @@ gulp.task('serve', ['build'], () => {
 });
 
 // Stream style changes to Browsersync clients
-gulp.task('bs-stream', ['style'], () => {
+gulp.task('bs-stream', ['style'], () =>
     gulp.src(path.dist + glob.css)
         .pipe(browserSync.stream())
-});
+);
 
 // Trigger a refresh on Browsersync clients
-gulp.task('bs-reload', ['build'], () => {
-    browserSync.reload();
-});
+gulp.task('bs-reload', ['build'], browserSync.reload);
 
-// Creates a minified build in /ship
-gulp.task('build-min', ['build'], () => {
+// Creates a production build in /ship
+gulp.task('build-ship', ['build'], () =>
     gulp.src(path.dist + 'index.html')
         .pipe(usemin({
             html: [
@@ -118,7 +120,25 @@ gulp.task('build-min', ['build'], () => {
             js: [ uglify ],
             vendorjs: [ () => { return uglify({ preserveComments: 'some' }); } ]
         }))
-        .pipe(gulp.dest(path.ship));
+        .pipe(gulp.dest(path.ship))
+);
+
+// Creates a production build and deploys it to an FTP server using the credentials
+// stored in ftp.json (schema: { "host": "...", "user": "...", "pass": "..." })
+gulp.task('ship', ['build-ship'], () => {
+    const config = require('./ftp.json');
+    const conn = ftp.create({
+        host:     config.host,
+        user:     config.user,
+        password: config.pass,
+        log:      util.log,
+        parallel: 6,
+        secure:   true
+    });
+
+    gulp.src(path.ship + glob.all, { buffer: false })
+        .pipe(conn.newer(path.ftp)) // only upload newer files
+        .pipe(conn.dest(path.ftp));
 });
 
 gulp.task('build', ['assets', 'index']);
