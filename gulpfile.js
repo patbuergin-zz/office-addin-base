@@ -70,7 +70,7 @@ gulp.task('style', () =>
 );
 
 // Injects compiled scripts and styles, as well as all dependencies into index.html
-gulp.task('index', ['markup', 'script', 'style'], function () {
+gulp.task('index', ['markup', 'script', 'style'], () => {
     const sources = gulp.src(
         [ path.debug + glob.js, path.debug + glob.css ],
         { read: false }
