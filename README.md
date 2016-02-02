@@ -1,5 +1,5 @@
 # office-addin-base
-An base project for rapidly building [Office Add-ins](http://dev.office.com/getting-started/addins) with [Babel](http://babeljs.io/), [Sass](http://sass-lang.com/), and [Browsersync](https://www.browsersync.io/).
+A base project for rapidly building [Office Add-ins](http://dev.office.com/getting-started/addins) with [Babel](http://babeljs.io/), [Sass](http://sass-lang.com/), and [Browsersync](https://www.browsersync.io/).
 
 ![Preview](doc/demo.gif)
 
