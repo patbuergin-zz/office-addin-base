@@ -42,7 +42,7 @@ _Add-in start URL_
 ```
 https://localhost:8443/
 ```
-This will create a manifest that can be loaded in all Office products.
+This will create a manifest that can be loaded in all supported Office products.
 
 ## Gulp Tasks
 ### `gulp build`
