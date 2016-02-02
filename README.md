@@ -1,7 +1,7 @@
 # office-addin-base
-An opinionated base project for building Office Add-ins.
+An base project for rapidly building [Office Add-ins](http://dev.office.com/getting-started/addins) with [Babel](http://babeljs.io/), [Sass](http://sass-lang.com/), and [Browsersync](https://www.browsersync.io/).
 
-TODO
+![Preview](doc/demo.gif)
 
 ## Setup
 ### Prerequisites
@@ -55,7 +55,9 @@ Runs the `build` task, and serves the debug build at `https://localhost:8443/`.
 Creates a production build in `/ship`.
 
 ### `gulp ship`
-Runs the `ship-build` task, and uploads the contents of `/ship` to an FTP server (default directory: `/site/wwwroot`). For this to work, you need to create a file called `ftp.json` in the root directory:
+Runs the `ship-build` task, and uploads the contents of `/ship` to an FTP server (default directory: `/site/wwwroot`).
+
+For this to work, you need to create a file called `ftp.json` in the root directory:
 ```javascript
 {
   "host": "...",
