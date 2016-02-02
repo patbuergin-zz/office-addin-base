@@ -24,9 +24,9 @@ In your console, change the current working directory to the `office-addin-base`
 npm install
 bower install
 ```
-This will install the local project dependencies as configured in `package.json` (npm) and `bower.json` (bower).
+This will install all local project dependencies as configured in `package.json` (npm) and `bower.json` (bower).
 
-## Create a Manifest
+## Create an Add-In Manifest
 Enter the following command in your console:
 ```
 yo office
@@ -40,12 +40,29 @@ Manifest.xml only (no application source files)
 
 _Add-in start URL_
 ```
-https://localhost:8443/dist/index.html
+https://localhost:8443/
 ```
 This will create a manifest that can be loaded in all Office products.
 
-## Build
-`gulp`
+## Gulp Tasks
+### `gulp build`
+Creates a debug build in `/debug`.
+
+### `gulp serve`
+Runs the `build` task, and serves the debug build at `https://localhost:8443/`.
+
+### `gulp ship-build`
+Creates a production build in `/ship`.
+
+### `gulp ship`
+Runs the `ship-build` task, and uploads the contents of `/ship` to an FTP server (default directory: `/site/wwwroot`). For this to work, you need to create a file called `ftp.json` in the root directory:
+```javascript
+{
+  "host": "...",
+  "user": "...",
+  "pass": "..."
+}
+```
 
 ## Run Your Add-In
 TODO

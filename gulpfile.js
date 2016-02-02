@@ -24,28 +24,28 @@ const glob = {
 
 const path = {
     src   : 'src/',
-    dist  : 'dist/',
+    debug : 'debug/',
     ship  : 'ship/',
     bower : 'bower_components/',
     ftp   : '/site/wwwroot' // Azure Web App
 };
 
-// Cleans the dist/ and ship/ folders
+// Cleans the debug/ and ship/ folders
 gulp.task('clean', () =>
-    gulp.src([ path.dist, path.ship ])
+    gulp.src([ path.debug, path.ship ])
         .pipe(rimraf())
 );
 
 // Applies operations to assets (e.g. images)
 gulp.task('assets', () =>
     gulp.src(path.src + glob.assets)
-        .pipe(gulp.dest(path.dist + 'assets'))
+        .pipe(gulp.dest(path.debug + 'assets'))
 );
 
 // Compiles the markup (html)
 gulp.task('markup', () =>
     gulp.src(path.src + glob.html)
-        .pipe(gulp.dest(path.dist))
+        .pipe(gulp.dest(path.debug))
 );
 
 // Compiles the scripts (js)
@@ -53,7 +53,7 @@ gulp.task('script', () =>
     gulp.src(path.src + glob.js)
         .pipe(plumber())
         .pipe(babel())
-        .pipe(gulp.dest(path.dist))
+        .pipe(gulp.dest(path.debug))
 );
 
 // Compiles the styles (css)
@@ -66,33 +66,34 @@ gulp.task('style', () =>
                 path.src + '_scss'
             ]
          }))
-        .pipe(gulp.dest(path.dist))
+        .pipe(gulp.dest(path.debug))
 );
 
 // Injects compiled scripts and styles, as well as all dependencies into index.html
 gulp.task('index', ['markup', 'script', 'style'], function () {
     const sources = gulp.src(
-        [ path.dist + glob.js, path.dist + glob.css ],
+        [ path.debug + glob.js, path.debug + glob.css ],
         { read: false }
     );
  
-    return gulp.src(path.dist + 'index.html')
+    return gulp.src(path.debug + 'index.html')
         .pipe(inject(sources, { relative: true }))
         .pipe(wiredep())
-        .pipe(gulp.dest(path.dist));
+        .pipe(gulp.dest(path.debug));
 });
 
 // Debug build of the web application
 gulp.task('build', ['assets', 'index']);
 
-// Builds the web application and serves it at https://localhost:8443/dist
+// Creates a debug build and serves it at https://localhost:8443/
 gulp.task('serve', ['build'], () => {
     browserSync.init({
         https: true,
         notify: false,
         port: 8443,
         server: {
-            baseDir: "./"
+            baseDir: path.debug,
+            routes: { '/bower_components': 'bower_components' }
         }
     });
 
@@ -100,24 +101,24 @@ gulp.task('serve', ['build'], () => {
     gulp.watch([path.src + glob.html, path.src + glob.js], ['bs-reload']);
 });
 
-// Stream style changes to Browsersync clients
+// Streams style changes to Browsersync clients
 gulp.task('bs-stream', ['style'], () =>
-    gulp.src(path.dist + glob.css)
+    gulp.src(path.debug + glob.css)
         .pipe(browserSync.stream())
 );
 
-// Trigger a refresh on Browsersync clients
+// Triggers a refresh on Browsersync clients
 gulp.task('bs-reload', ['build'], browserSync.reload);
 
-// Move assets to /ship
+// Moves assets to /ship
 gulp.task('ship-assets', () =>
-    gulp.src(path.dist + glob.assets)
+    gulp.src(path.debug + glob.assets)
         .pipe(gulp.dest(path.ship + 'assets'))
 );
 
 // Creates a production build in /ship
-gulp.task('ship-build', ['build'], () =>
-    gulp.src(path.dist + 'index.html')
+gulp.task('ship-build', ['build', 'ship-assets'], () =>
+    gulp.src(path.debug + 'index.html')
         .pipe(usemin({
             html: [
                 htmlmin({
@@ -134,7 +135,7 @@ gulp.task('ship-build', ['build'], () =>
 
 // Creates a production build and deploys it to an FTP server using the credentials
 // stored in ftp.json (schema: { "host": "...", "user": "...", "pass": "..." })
-gulp.task('ship', ['ship-assets', 'ship-build'], () => {
+gulp.task('ship', ['ship-build'], () => {
     const config = require('./ftp.json');
     const conn = ftp.create({
         host:     config.host,
@@ -150,5 +151,5 @@ gulp.task('ship', ['ship-assets', 'ship-build'], () => {
         .pipe(conn.dest(path.ftp));
 });
 
-// Execute the serve task by default ('gulp' command without args)
+// When gulp is executed without args, run the serve task
 gulp.task('default', ['serve']);
