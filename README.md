@@ -1,4 +1,6 @@
 # office-addin-base
+[![devDependency Status](https://david-dm.org/patbuergin/office-addin-base/dev-status.svg)](https://david-dm.org/patbuergin/office-addin-base#info=devDependencies)
+
 A base project for rapidly building [Office Add-ins](http://dev.office.com/getting-started/addins) with [Babel](http://babeljs.io/), [Sass](http://sass-lang.com/), and [Browsersync](https://www.browsersync.io/).
 
 ![Preview](doc/demo.gif)
