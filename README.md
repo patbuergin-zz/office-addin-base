@@ -9,6 +9,8 @@ A base project for rapidly building [Office Add-ins](http://dev.office.com/getti
 ### Prerequisites
 #### 1. Install Node.js
 Download a suitable package from the [official page](https://nodejs.org/en/) and follow the instructions.
+
+Please make sure that your [version supports ES6](https://nodejs.org/en/docs/es6/).
 #### 2. Open a Node-enabled console
 **Windows**: Node.js command prompt
 
