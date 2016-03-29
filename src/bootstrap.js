@@ -1,10 +1,15 @@
 (function() {
     /*
      * Extract host infos from the location.
-     * Example: "?_host_Info=Powerpoint|Win32|16.01|en-US"
+     * 
+     * Examples:
+     * 1) ...?_host_Info=Powerpoint|Win32|16.01|en-US|...
+     * 2) ...?_host_Info=Powerpoint$Mac$16.00$en-IE|...
      */
     const [client, os, version, locale] =
-        window.location.search.split('=')[1].split('|');
+        window.location.search
+            .match(/host_Info=([^&]+)(?=$|&)/)[1]
+            .split(/\$|\|/);
 
 
     Office.initialize = () => {
